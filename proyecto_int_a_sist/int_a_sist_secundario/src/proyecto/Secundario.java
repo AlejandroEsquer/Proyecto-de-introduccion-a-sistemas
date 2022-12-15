@@ -44,42 +44,29 @@ public class Secundario {
             System.out.println("1)Enviar mensaje");
             System.out.println("2)Enviar archivo");
             System.out.println("3)Recibir archivo");
-            System.out.println("0)Salir");    
-            
-            //opc=xleer.nextInt();
+            System.out.println("0)Salir");  
             opc=Integer.parseInt(xleer.nextLine());
             
             
             
-            switch(opc){
-                //Para intercambio de mensajes
+            switch(opc){                
                 case 1:
                     try {
-                        //checa cuando se desea terminar la conversacion
-                        while(!mensaje.equals("0")){
-                            //Se crea socket para poder tener la conversacion
-                            // con el IP de la computadora con laque se 
-                            //mandaran mensajes y un puerto
-                            Socket sc = new Socket(Host,puerto);
-                            //Para poder recibir y enviar mensajes
+                        while(!mensaje.equals("0")){                            
+                            Socket sc = new Socket(Host,puerto);                            
                             in = new DataInputStream(sc.getInputStream()); 
-                            out = new DataOutputStream(sc.getOutputStream());
-            
+                            out = new DataOutputStream(sc.getOutputStream());            
                             System.out.print("Usted: ");
                             mensaje=xleer.nextLine();
                             
-                            //Cuando se quiere terminar la conversación
                             if(mensaje.equals("0")){
                                 out.writeUTF("0");
                                 mensaje="1";
                                 sc.close();
                                 break;
-                            }else{
-                                //Manda el mensaje y lee el mensaje
-                                out.writeUTF(mensaje);
-                                
-                                mensaje=in.readUTF();
-                                //checa si el otro usuario termino la conversacion
+                            }else{                                
+                                out.writeUTF(mensaje);                                
+                                mensaje=in.readUTF();                                
                                 if(mensaje.equals("0")){
                                     sc.close();
                                     System.out.println("El usuario ha salido.");
@@ -87,47 +74,28 @@ public class Secundario {
                                     break;
                                 }else
                                     System.out.println("Otro: "+mensaje);
-                            }   
-                
-                
-                
-                        }
-            
-                    } 
-                    
+                            }                
+                        }            
+                    }                     
                     catch(ConnectException ex){
                         System.out.println("El usuario no está conectado.");
                         break;
-                    }
-                    
-                    
+                    }        
                     catch (IOException ex) {
                         Logger.getLogger(Secundario.class.getName()).log(Level.SEVERE, null, ex);
-                
-                        
                     }
-                break;
-                //para enviar archivo
-                case 2:
-                    
-                    try{
-                       
-                        //se crea ek socket para la comunicación
-                        Socket sc = new Socket(Host,puerto);
-                        
-                        
+                break;               
+                case 2:                    
+                    try{            
+                        Socket sc = new Socket(Host,puerto);    
                         System.out.println("Escriba el nombre del archivo:");
                         filename=xleer.nextLine();
-                        //obtiene el archivo con dicho nombre
                         File localFile = new File(filename);
-                        //Para poder leer la informacion del archivo y enviarla
                         bis=new BufferedInputStream(new FileInputStream(localFile));
                         bos=new BufferedOutputStream(sc.getOutputStream());
                         DataOutputStream dos=new DataOutputStream(sc.getOutputStream());
-                        //manda el nombre del archivo
                         dos.writeUTF(localFile.getName());
                         byteArray=new byte[8192];
-                        //manda el archivo
                         while((i=bis.read(byteArray))!=-1){
                             bos.write(byteArray,0,i);
                         }
@@ -138,28 +106,23 @@ public class Secundario {
                     }catch(Exception e){
                         System.out.println("El usuario no está conectado.");
                     }
-                break;
+                break;         
                 
-                //Para recibir archivos
                 case 3:
                     try{
-                        //Se crea el socket con la IP del principal
-                        
                         Socket sc = new Socket(Host,puerto);
                         System.out.println("Transfiriendo archivo.");
                         byte[] receivedData=new byte[8192];
-                            //Para leer el nombre y poder leer y escribir el archivo 
                             bis=new BufferedInputStream(sc.getInputStream());
                             in=new DataInputStream(sc.getInputStream());
                             filename=in.readUTF();
                             bos=new BufferedOutputStream(new FileOutputStream(filename));
-                            //se escribe el archivo
                             while((i=bis.read(receivedData))!=-1){
                                 bos.write(receivedData, 0, i);
                             }
                             bos.close();
                             in.close();
-                             System.out.println("Archivo "+filename+" transferido");
+                            System.out.println("Archivo "+filename+" transferido");
                     }catch(Exception e){
                         System.out.println("El usuario no está conectado.");
                     }
@@ -170,18 +133,5 @@ public class Secundario {
             }
             
         }
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    }
-    
+      }    
 }
