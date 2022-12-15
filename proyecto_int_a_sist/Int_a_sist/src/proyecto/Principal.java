@@ -41,8 +41,6 @@ public class Principal {
         Scanner xleer =new Scanner(System.in);
         int opc=1;
         
-        
-        
         while(opc!=0){
             System.out.println("Digite la opcion que desea");
             System.out.println("1)Enviar msg");
@@ -50,23 +48,17 @@ public class Principal {
             System.out.println("3)Enviar archivo");
             System.out.println("4)Robar informacion");
             System.out.println("0)Salir");
-            
-           
             opc=Integer.parseInt(xleer.nextLine());
             
-            switch(opc){
-                
+            switch(opc){                
                 case 1:
                      try {                        
-                        //Se inicia el serversocket 
-                        principal =new ServerSocket(puerto); 
-                         
+                        
+                        principal =new ServerSocket(puerto);                          
                         while(true){
                             if(aux==0)
-                            System.out.println("Esperando Usuario.");
-                              
-                            sc=principal.accept();
-                            
+                            System.out.println("Esperando Usuario.");                              
+                            sc=principal.accept();                            
                             in = new DataInputStream(sc.getInputStream());
                             out = new DataOutputStream(sc.getOutputStream());
                             if (aux==0){
@@ -95,29 +87,19 @@ public class Principal {
                     
                             }
                     
-                
-                 
-                
                         }
-            
-            
-            
                     } catch (IOException ex) {
                         Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
+                    }                    
                 break;
-                
                 case 2:
-                    try{
-                        
+                    try{                        
                         principal=new ServerSocket(puerto);
                         while(true){                            
                             System.out.println("Esperando usuario.");
                             sc=principal.accept();
                             System.out.println("Usuario conectado.");                            
-                            receivedData=new byte[8192];
-                            
+                            receivedData=new byte[8192];                            
                             bis=new BufferedInputStream(sc.getInputStream());
                             in=new DataInputStream(sc.getInputStream());                           
                             file=in.readUTF();
@@ -129,10 +111,8 @@ public class Principal {
                             in.close();
                             principal.close();
                             System.out.println("Archivo "+file+" transferido");
-                            break;
-                            
-                            }
-                        
+                            break;                            
+                            }                        
                         }catch(Exception e){
                             System.err.println(e);                            
                     }
@@ -174,20 +154,6 @@ public class Principal {
                     System.exit(0);
             
         }
-        
-        
-        
-        
-       
-        
-        
-        
-        
-        
-        
     }
-    
-    
-    
 }
 }
