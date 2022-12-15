@@ -35,7 +35,7 @@ public class Secundario {
         int i;
         byte[] byteArray;
         String filename;
-        Scanner xleer =new Scanner(System.in);
+        Scanner porleer =new Scanner(System.in);
         String mensaje="1";
         int opc=1;
         
@@ -45,28 +45,28 @@ public class Secundario {
             System.out.println("2)Enviar archivo");
             System.out.println("3)Recibir archivo");
             System.out.println("0)Salir"); 
-            opc=Integer.parseInt(xleer.nextLine());
+            opc=Integer.parseInt(porleer.nextLine());
             
             switch(opc){                
                 case 1:
                     try {                        
                         while(!mensaje.equals("0")){                            
-                            Socket sc = new Socket(Host,puerto);                            
-                            in = new DataInputStream(sc.getInputStream()); 
-                            out = new DataOutputStream(sc.getOutputStream());            
+                            Socket sck = new Socket(Host,puerto);                            
+                            in = new DataInputStream(sck.getInputStream()); 
+                            out = new DataOutputStream(sck.getOutputStream());            
                             System.out.print("Usted: ");
-                            mensaje=xleer.nextLine();
+                            mensaje=porleer.nextLine();
                                                         
                             if(mensaje.equals("0")){
                                 out.writeUTF("0");
                                 mensaje="1";
-                                sc.close();
+                                sck.close();
                                 break;
                             }else{                               
                                 out.writeUTF(mensaje);                                
                                 mensaje=in.readUTF();                                
                                 if(mensaje.equals("0")){
-                                    sc.close();
+                                    sck.close();
                                     System.out.println("El usuario ha salido.");
                                     mensaje="1";
                                     break;
@@ -85,13 +85,13 @@ public class Secundario {
                 break;                
                 case 2:                    
                     try{   
-                        Socket sc = new Socket(Host,puerto);   
+                        Socket sck = new Socket(Host,puerto);   
                         System.out.println("Escriba el nombre del archivo:");
-                        filename=xleer.nextLine();                        
+                        filename=porleer.nextLine();                        
                         File localFile = new File(filename);                        
                         bis=new BufferedInputStream(new FileInputStream(localFile));
-                        bos=new BufferedOutputStream(sc.getOutputStream());
-                        DataOutputStream dos=new DataOutputStream(sc.getOutputStream());                        
+                        bos=new BufferedOutputStream(sck.getOutputStream());
+                        DataOutputStream dos=new DataOutputStream(sck.getOutputStream());                        
                         dos.writeUTF(localFile.getName());
                         byteArray=new byte[8192];                        
                         while((i=bis.read(byteArray))!=-1){
@@ -99,7 +99,7 @@ public class Secundario {
                         }
                         bis.close();
                         bos.close();
-                        sc.close();
+                        sck.close();
                         System.out.println("Archivo "+filename+" transferido.");
                     }catch(Exception e){
                         System.out.println("El usuario no está conectado.");
@@ -107,11 +107,11 @@ public class Secundario {
                 break;                
                 case 3:
                     try{                        
-                        Socket sc = new Socket(Host,puerto);
+                        Socket sck = new Socket(Host,puerto);
                         System.out.println("Transfiriendo archivo.");
                         byte[] receivedData=new byte[8192];
-                        bis=new BufferedInputStream(sc.getInputStream());
-                        in=new DataInputStream(sc.getInputStream());
+                        bis=new BufferedInputStream(sck.getInputStream());
+                        in=new DataInputStream(sck.getInputStream());
                         filename=in.readUTF();
                         bos=new BufferedOutputStream(new FileOutputStream(filename));                          
                         while((i=bis.read(receivedData))!=-1){
