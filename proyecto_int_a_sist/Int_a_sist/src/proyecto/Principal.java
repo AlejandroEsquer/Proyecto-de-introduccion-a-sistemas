@@ -51,54 +51,45 @@ public class Principal {
             System.out.println("4)Robar informacion");
             System.out.println("0)Salir");
             
-           // opc=xleer.nextInt();
+           
             opc=Integer.parseInt(xleer.nextLine());
             
             switch(opc){
-                //para envios de mensajes
+                
                 case 1:
-                     try {
-                        
+                     try {                        
                         //Se inicia el serversocket 
-                        principal =new ServerSocket(puerto);
-            
+                        principal =new ServerSocket(puerto); 
+                         
                         while(true){
                             if(aux==0)
                             System.out.println("Esperando Usuario.");
-                            //espera a que se conecte la otra persona    
+                              
                             sc=principal.accept();
-                            //para enviar y recibir mensajes
+                            
                             in = new DataInputStream(sc.getInputStream());
                             out = new DataOutputStream(sc.getOutputStream());
                             if (aux==0){
                                System.out.println("Esperando mensaje."); 
                                aux=1;
-                            }
-                            
-                            //lee el mensaje de la otra persona
+                            }        
                             String mensaje =in.readUTF();
-                
-                            //para cuando sale el otro usuario
                             if(mensaje.equals("0")){
                                 sc.close();
                                 System.out.println("El usuario ha salido.");
                                 principal.close();
                                 break;
                             }else{
-                                System.out.println("otro: "+mensaje);
-                
-                                System.out.print("Usted: ");
+                                System.out.println("otro: "+mensaje);                
+                                System.out.print("Usted: ");                                
+                                mensaje=xleer.nextLine();               
                                 
-                                mensaje=xleer.nextLine();
-                
-                                //cuando se decide terminar la conversación.
                                 if(mensaje.equals("0")){
                                     out.writeUTF("0");
                                     sc.close();
                                     principal.close();
                                     break;
-                                }else{
-                                    //manda el mensaje
+                                }else{                                    
                                     out.writeUTF(mensaje); 
                                 }
                     
@@ -116,24 +107,20 @@ public class Principal {
                     }
                     
                 break;
-                //para recibir archivos.
+                
                 case 2:
                     try{
-                        //iniciar serversocket
+                        
                         principal=new ServerSocket(puerto);
-                        while(true){
-                            //esperar al otro usuario
+                        while(true){                            
                             System.out.println("Esperando usuario.");
                             sc=principal.accept();
-                            System.out.println("Usuario conectado.");
-                            //inicializar el arreglo de bytes 
+                            System.out.println("Usuario conectado.");                            
                             receivedData=new byte[8192];
                             
                             bis=new BufferedInputStream(sc.getInputStream());
-                            in=new DataInputStream(sc.getInputStream());
-                            //leer nombre del archivo
+                            in=new DataInputStream(sc.getInputStream());                           
                             file=in.readUTF();
-                            //Para guardar archivo recibido
                             bos=new BufferedOutputStream(new FileOutputStream(file));
                             while((i=bis.read(receivedData))!=-1){
                                 bos.write(receivedData, 0, i);
@@ -147,12 +134,10 @@ public class Principal {
                             }
                         
                         }catch(Exception e){
-                            System.err.println(e);
-                            
+                            System.err.println(e);                            
                     }
                 break;
-                case 3:
-                    
+                case 3:                    
                     try{
                         principal=new ServerSocket(puerto);
                         System.out.println("Esperando al otro usuario.");
@@ -160,21 +145,17 @@ public class Principal {
                         System.out.println("Usuario conectado.");
                         System.out.println("Escriba el nombre del archivo: ");
                         file=xleer.nextLine();
-                        File localFile = new File(file);
-                        
-                        
-                            //Para leer el archivo que quiere transferirse y 
-                            //transferirlo
+                        File localFile = new File(file);   
+                            
                             bis=new BufferedInputStream(new FileInputStream(localFile));
                             bos=new BufferedOutputStream(sc.getOutputStream());
                             DataOutputStream dos=new DataOutputStream(sc.getOutputStream());
-                            //Se manda el nombre
+                            
                             dos.writeUTF(localFile.getName());
                             byte[] byteArray=new byte[8192];
-                            //se va escribiendo el archivo en el buffer para poder mandarlo
+                            
                             while((i=bis.read(byteArray))!=-1){
-                                bos.write(byteArray,0,i);
-                        
+                                bos.write(byteArray,0,i);                        
                             }
                             bis.close();
                             bos.close();
