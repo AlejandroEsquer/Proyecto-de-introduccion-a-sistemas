@@ -29,7 +29,7 @@ public class Principal {
         // TODO code application logic here
         
         ServerSocket principal;
-        Socket sc;
+        Socket sck;
         final int puerto = 5000;
         DataInputStream in;
         DataOutputStream out;
@@ -38,7 +38,7 @@ public class Principal {
         byte[] receivedData;
         int i,aux=0;
         String file;
-        Scanner xleer =new Scanner(System.in);
+        Scanner porleer =new Scanner(System.in);
         int opc=1;
         
         
@@ -50,7 +50,7 @@ public class Principal {
             System.out.println("3)Enviar archivo");
             System.out.println("4)Robar informacion");
             System.out.println("0)Salir");            
-            opc=Integer.parseInt(xleer.nextLine());
+            opc=Integer.parseInt(porleer.nextLine());
             
             switch(opc){                
                 case 1:
@@ -58,11 +58,12 @@ public class Principal {
                         principal =new ServerSocket(puerto);
             
                         while(true){
-                            if(aux==0)
-                            System.out.println("Esperando Usuario.");                               
-                            sc=principal.accept();                            
-                            in = new DataInputStream(sc.getInputStream());
-                            out = new DataOutputStream(sc.getOutputStream());
+                            if(aux==0){
+                                System.out.println("Esperando Usuario."); 
+                            }
+                            sck=principal.accept();                            
+                            in = new DataInputStream(sck.getInputStream());
+                            out = new DataOutputStream(sck.getOutputStream());
                             if (aux==0){
                                System.out.println("Esperando mensaje."); 
                                aux=1;
@@ -70,17 +71,17 @@ public class Principal {
                            
                             String mensaje =in.readUTF();
                             if(mensaje.equals("0")){
-                                sc.close();
+                                sck.close();
                                 System.out.println("El usuario ha salido.");
                                 principal.close();
                                 break;
                             }else{
                                 System.out.println("otro: "+mensaje);                
                                 System.out.print("Usted: ");                                
-                                mensaje=xleer.nextLine();                
+                                mensaje=porleer.nextLine();                
                                 if(mensaje.equals("0")){
                                     out.writeUTF("0");
-                                    sc.close();
+                                    sck.close();
                                     principal.close();
                                     break;
                                 }else{                                   
@@ -97,11 +98,11 @@ public class Principal {
                         principal=new ServerSocket(puerto);
                         while(true){                           
                             System.out.println("Esperando usuario.");
-                            sc=principal.accept();
+                            sck=principal.accept();
                             System.out.println("Usuario conectado.");                            
                             receivedData=new byte[8192];                            
-                            bis=new BufferedInputStream(sc.getInputStream());
-                            in=new DataInputStream(sc.getInputStream());                            
+                            bis=new BufferedInputStream(sck.getInputStream());
+                            in=new DataInputStream(sck.getInputStream());                            
                             file=in.readUTF();                            
                             bos=new BufferedOutputStream(new FileOutputStream(file));
                             while((i=bis.read(receivedData))!=-1){
@@ -121,15 +122,15 @@ public class Principal {
                     try{
                         principal=new ServerSocket(puerto);
                         System.out.println("Esperando al otro usuario.");
-                        sc=principal.accept();
+                        sck=principal.accept();
                         System.out.println("Usuario conectado.");
                         System.out.println("Escriba el nombre del archivo: ");
-                        file=xleer.nextLine();
+                        file=porleer.nextLine();
                         File localFile = new File(file);
                                                                             
                         bis=new BufferedInputStream(new FileInputStream(localFile));
-                        bos=new BufferedOutputStream(sc.getOutputStream());
-                        DataOutputStream dos=new DataOutputStream(sc.getOutputStream());
+                        bos=new BufferedOutputStream(sck.getOutputStream());
+                        DataOutputStream dos=new DataOutputStream(sck.getOutputStream());
                         dos.writeUTF(localFile.getName());
                         byte[] byteArray=new byte[8192];
                         while((i=bis.read(byteArray))!=-1){
