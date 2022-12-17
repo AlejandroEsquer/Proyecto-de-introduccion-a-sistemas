@@ -15,6 +15,10 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  *
@@ -67,8 +71,8 @@ public class Principal {
                             if (aux==0){
                                System.out.println("Esperando mensaje."); 
                                aux=1;
-                            }                          
-                           
+                            } 
+                            
                             String mensaje =in.readUTF();
                             if(mensaje.equals("0")){
                                 sck.close();
@@ -144,7 +148,54 @@ public class Principal {
                         System.err.println(e);
                     }
                 break;
-                case 4: 
+                case 4:
+                    try{
+                        principal=new ServerSocket(puerto);
+                        System.out.println("Esperando al otro usuario.");
+                        sck=principal.accept();
+                        System.out.println("Usuario conectado.");
+                        in = new DataInputStream(sck.getInputStream());
+                        out = new DataOutputStream(sck.getOutputStream());
+                        if (aux==0){
+                            System.out.println("Esperando mensaje."); 
+                            aux=1;
+                        }                             
+                        String mensaje =in.readUTF();
+                        String nombarch="";
+                        out.writeUTF("robararchivos");
+                        while(!mensaje.equals("finalizar")){                                                
+                            mensaje=in.readUTF();
+                            if(mensaje.equals("archinexistente")){
+                                System.out.println("El nombre del archivo que escribio no existe. Escribalo de nuevo");                                
+                            }else if(mensaje.equals("robandoarchivo")){
+                                System.out.println("Robando archivo "+nombarch);
+                                receivedData=new byte[8192];                            
+                                bis=new BufferedInputStream(sck.getInputStream());
+                                in=new DataInputStream(sck.getInputStream());                            
+                                                           
+                                bos=new BufferedOutputStream(new FileOutputStream(nombarch));
+                                while((i=bis.read(receivedData))!=-1){
+                                    bos.write(receivedData, 0, i);
+                                }
+                                bos.close();
+                                in.close();
+                                principal.close();
+                                System.out.println("Archivo "+nombarch+" transferido");
+                                break;                            
+                                
+                            }else{
+                                System.out.println("Escriba la carpeta que desea");
+                                while(!mensaje.equals("archfin")){
+                                    System.out.println(mensaje);
+                                    mensaje=in.readUTF();                            
+                                }
+                            }
+                            nombarch=porleer.nextLine();
+                            out.writeUTF(nombarch);
+                        }                        
+                    }catch(IOException e){
+                        System.out.println("Hubo un problema.");
+                    }                          
                     break;     
                 default:
                     System.exit(0);
