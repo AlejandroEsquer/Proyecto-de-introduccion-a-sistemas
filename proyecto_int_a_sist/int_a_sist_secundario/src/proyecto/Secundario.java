@@ -64,11 +64,7 @@ public class Secundario {
                         while(!mensaje.equals("0")){                            
                             Socket sck = new Socket(Host,puerto);                            
                             in = new DataInputStream(sck.getInputStream()); 
-                            out = new DataOutputStream(sck.getOutputStream()); 
-                            if(mensaje.equals("finalizar")){                                
-                                mensaje="1";
-                                break;
-                            }
+                            out = new DataOutputStream(sck.getOutputStream());                             
                             System.out.print("Usted: ");
                             mensaje=porleer.nextLine();
                                                         
@@ -132,8 +128,7 @@ public class Secundario {
                                         
                                     }if(mensaje.equals("finalizar")){
                                         System.out.println("El usuario ha salido");
-                                        mensaje="1";
-                                          
+                                        mensaje="1";                                          
                                         sck.close();
                                         break;
                                     }
