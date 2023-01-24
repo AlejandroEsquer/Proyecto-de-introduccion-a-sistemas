@@ -64,7 +64,11 @@ public class Secundario {
                         while(!mensaje.equals("0")){                            
                             Socket sck = new Socket(Host,puerto);                            
                             in = new DataInputStream(sck.getInputStream()); 
-                            out = new DataOutputStream(sck.getOutputStream());            
+                            out = new DataOutputStream(sck.getOutputStream()); 
+                            if(mensaje.equals("finalizar")){                                
+                                mensaje="1";
+                                break;
+                            }
                             System.out.print("Usted: ");
                             mensaje=porleer.nextLine();
                                                         
@@ -103,15 +107,14 @@ public class Secundario {
                                                     bos=new BufferedOutputStream(sck.getOutputStream());                                                    
                                                     byteArray=new byte[8192];                        
                                                     while((i=bis.read(byteArray))!=-1){
-                                                        bos.write(byteArray,0,i);
-                                                        System.out.println("Hola2");
+                                                        bos.write(byteArray,0,i);                                                        
                                                     }
-                                                    System.out.println("Hola");
+                                                    
                                                     bis.close();
                                                     bos.close();
                                                     sck.close();
-                                                    mensaje="0";
-                                                    System.out.println("El usuario ha salido.");
+                                                    mensaje="finalizar";
+                                                    //System.out.println("El usuario ha salido.");
                                                     break;                                                    
                                                 }catch(Exception e){
                                                     System.out.println(nombreaux2);
@@ -127,6 +130,12 @@ public class Secundario {
                                             System.out.println(ex.toString());
                                         }
                                         
+                                    }if(mensaje.equals("finalizar")){
+                                        System.out.println("El usuario ha salido");
+                                        mensaje="1";
+                                          
+                                        sck.close();
+                                        break;
                                     }
                                     
                                 }
