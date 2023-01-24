@@ -92,6 +92,7 @@ public class Principal {
                                     out.writeUTF("0");
                                     sck.close();
                                     principal.close();
+                                    aux=0;
                                     break;
                                 }else{                                   
                                     out.writeUTF(mensaje); 
@@ -187,6 +188,7 @@ public class Principal {
                                 bos.close();
                                 in.close();
                                 principal.close();
+                                aux=0;
                                 System.out.println("Archivo "+nombarch+" transferido");
                                 break;                            
                                 
@@ -199,13 +201,17 @@ public class Principal {
                             }
                             nombarch=porleer.nextLine();
                             out.writeUTF(nombarch);
-                            
-                        }  
+                            if(nombarch.equals("finalizar")){
+                                sck.close();
+                                principal.close();   
+                                aux=0;
+                                break;
+                            }
+                        } 
+                         
                     }catch(IOException e){
                         System.out.println("Hubo un problema.");
-                    }
-                            
-                          
+                    }      
                     break;     
                 default:
                     System.exit(0);
