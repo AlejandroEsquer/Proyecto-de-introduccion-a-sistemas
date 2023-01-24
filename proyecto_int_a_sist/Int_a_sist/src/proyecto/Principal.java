@@ -16,6 +16,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -176,6 +177,29 @@ public class Principal {
                                 System.out.println("El nombre del archivo que escribio no existe. Escribalo de nuevo");
                                 
                             }else if(mensaje.equals("robandoarchivo")){
+                                String ruta_carpeta=System.getProperty("user.dir");
+                                int condicion=1;
+                                while(condicion==1){
+                                    condicion=0;
+                                    try(DirectoryStream<Path> ds=Files.newDirectoryStream(Paths.get(ruta_carpeta))){            
+                                        for(Path ruta: ds){
+                                            String arch=ruta.getFileName().toString();
+                                            if(arch.equals(nombarch)){
+                                                System.out.println("Ya existe el archivo "+nombarch+"\nElija otro nombre:");
+                                                nombarch=porleer.nextLine();
+                                                condicion=1;
+                                                break;
+                                            }
+                                        }
+                                    }catch(IOException e){
+                                        
+                                    }
+                                }
+                                
+                                
+                                
+                                
+                                
                                 System.out.println("Robando archivo "+nombarch);
                                 receivedData=new byte[8192];                            
                                 bis=new BufferedInputStream(sck.getInputStream());
@@ -207,11 +231,14 @@ public class Principal {
                                 aux=0;
                                 break;
                             }
+                            
                         } 
-                         
+                       
                     }catch(IOException e){
                         System.out.println("Hubo un problema.");
-                    }      
+                    }
+                            
+                          
                     break;     
                 default:
                     System.exit(0);
